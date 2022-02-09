@@ -14,12 +14,20 @@ function App() {
     ]);
 
     const [title, setTitle] = useState('')
-    const bodyInputRef= useRef();
+    const [body, setBody]= useState();
 
     const addNewPost = (e) => {
         e.preventDefault();
-        console.log(title);
-        console.log(bodyInputRef.current.value);
+        const newPost = {
+            id: Date.now(),
+            title,
+            body
+        };
+        console.log(newPost);
+        setPosts([...posts, newPost]);
+
+        setTitle('');
+        setBody('');
     }
 
     return (
@@ -39,9 +47,9 @@ function App() {
                 {/* неуправляемый/неконтроллируемый*/}
                 <MyInput
                     type="text"
-                    ref={bodyInputRef}
+                    value={body}
+                    onChange={e => setBody(e.target.value)}
                     placeholder="Описание поста"/>
-
                 <MyButton onClick={addNewPost}>Создать пост</MyButton>
             </form>
 
