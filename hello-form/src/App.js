@@ -1,17 +1,20 @@
 import './styles/App.css';
-import Counter from "./components/Counter";
 import '../src/styles/App.css'
-import PostItem from "./components/PostItem";
+import {useState} from "react";
+import PostList from "./components/PostList";
 
 function App() {
+
+    const [posts, setPosts] = useState([
+        {id: 1, title: 'JavaScript', body: 'Description'},
+        {id: 2, title: 'JavaScript 2', body: 'Description'},
+        {id: 3, title: 'JavaScript 3', body: 'Description'}
+    ]);
+
     return (
         <div>
-            <PostItem post={{id: 1, title:'java script', body:'Description'}}/>
-            <PostItem post={{id: 2, title:'java script', body:'Description'}}/>
-            <PostItem post={{id: 3, title:'java script', body:'Description'}}/>
-
+           <PostList posts={posts} title="список постов 1"/>
         </div>
-
     );
 }
 
