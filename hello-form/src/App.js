@@ -1,6 +1,6 @@
 import './styles/App.css';
 import '../src/styles/App.css'
-import {useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
@@ -9,6 +9,9 @@ import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import MyButton from "./components/UI/button/MyButton";
 import {usePosts} from "./hooks/usePost";
+import axios from "axios";
+import PostService from "./API/PostService";
+import {useFetching} from "./hooks/useFetching";
 
 function App() {
 
@@ -20,8 +23,16 @@ function App() {
 
     const [filter, setFilter] = useState({sort: '', query: ''});
     const [modal, setModal] = useState(false);
-    const  sortedAndSearchingPosts = usePosts(posts, filter.sort, filter.query);
+    const sortedAndSearchingPosts = usePosts(posts, filter.sort, filter.query);
 
+    const [fetchPosts, isPostLoading, postError,] = useFetching(async () => {
+        const posts = await PostService.getAll();
+        setPosts(posts)
+    })
+
+    useEffect(() => {
+        fetchPosts()
+    }, [])
 
 
     const createPost = (newPost) => {
@@ -35,9 +46,13 @@ function App() {
 
     return (
         <div className="App">
+            <button
+                onClick={fetchPosts}
+            >GET
+            </button>
 
             <MyButton
-                style={{marginTop:30}}
+                style={{marginTop: 30}}
                 onClick={() => setModal(true)}
             >
                 Создать
@@ -53,9 +68,14 @@ function App() {
                 filter={filter}
                 setFilter={setFilter}
             />
+            {postError &&
+                <h2>Произошла ошибка ${postError}</h2>
+            }
 
-            <PostList remove={removePost} posts={sortedAndSearchingPosts} title="список постов "/>
-
+            {isPostLoading
+                ? <h2>Идет загрузка...</h2>
+                : <PostList remove={removePost} posts={sortedAndSearchingPosts} title="список постов "/>
+            }
 
         </div>
     );
