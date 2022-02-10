@@ -2,8 +2,7 @@ import './styles/App.css';
 import '../src/styles/App.css'
 import {useRef, useState} from "react";
 import PostList from "./components/PostList";
-import MyButton from "./components/UI/button/MyButton";
-import MyInput from "./components/UI/input/MyInput";
+import PostForm from "./components/PostForm";
 
 function App() {
 
@@ -13,47 +12,25 @@ function App() {
         {id: 3, title: 'JavaScript 3', body: 'Description'}
     ]);
 
-    const [title, setTitle] = useState('')
-    const [body, setBody]= useState();
 
-    const addNewPost = (e) => {
-        e.preventDefault();
-        const newPost = {
-            id: Date.now(),
-            title,
-            body
-        };
-        console.log(newPost);
-        setPosts([...posts, newPost]);
+    const createPost = (newPost) => {
+        setPosts([...posts, newPost])
+    };
 
-        setTitle('');
-        setBody('');
+    const removePost = (post) => {
+        setPosts(posts.filter(p => p.id !== post.id))
     }
 
     return (
         <div>
-            <form>
-                {/*упраляемый*/}
-                <MyInput
-                    value={title}
-                    type="text"
-                    placeholder="название поста"
-                    onChange={e => setTitle(e.target.value)}
-                />
-                {/*<input*/}
-                {/*    ref={bodyInputRef}*/}
-                {/*type="text"*/}
-                {/*/>*/}
-                {/* неуправляемый/неконтроллируемый*/}
-                <MyInput
-                    type="text"
-                    value={body}
-                    onChange={e => setBody(e.target.value)}
-                    placeholder="Описание поста"/>
-                <MyButton onClick={addNewPost}>Создать пост</MyButton>
-            </form>
+            <PostForm create={createPost}/>
+            {posts.length !== 0
+            ? <PostList remove={removePost} posts={posts} title="список постов "/>
+                : <h2 style={{textAlign:'center'}}>
+                    Посты не найдены
+                   </h2>
+            }
 
-            <PostList posts={posts} title="список постов 1"/>
         </div>
     );
 }
